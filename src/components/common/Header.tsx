@@ -284,12 +284,14 @@ const Header: React.FC = () => {
               >
                 Contact
               </Link>
+              {auth.isAuthenticated && (
+                <div className="text-gray-600 text-sm mb-1">
+                  Welcome, {auth.user?.name}
+                </div>
+              )}
               <Link 
                 to="/profile" 
                 className="block text-gray-800 hover:text-primary-600 font-medium"
-                  <div className="text-gray-600 text-sm">
-                    Welcome, {auth.user?.name}
-                  </div>
               >
                 {auth.isAuthenticated ? 'My Profile' : 'Sign In'}
               </Link>
