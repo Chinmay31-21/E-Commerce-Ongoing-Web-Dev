@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Heart, Search, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Heart, Search, Menu, X, User, LogOut } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
 import CartSidebar from '../cart/CartSidebar';
+import LoginModal from '../auth/LoginModal';
+import RegisterModal from '../auth/RegisterModal';
 import { categories } from '../../data/categories';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const { cart, toggleCart } = useCart();
+  const { auth, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   // Handle scroll event to change header style
   useEffect(() => {
@@ -34,6 +40,16 @@ const Header: React.FC = () => {
     if (searchQuery.trim()) {
       window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
+  };
+
+  const handleSwitchToRegister = () => {
+    setShowLoginModal(false);
+    setShowRegisterModal(true);
+  };
+
+  const handleSwitchToLogin = () => {
+    setShowRegisterModal(false);
+    setShowLoginModal(true);
   };
   
   return (
@@ -128,14 +144,57 @@ const Header: React.FC = () => {
           
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <Link 
-              to="/account" 
-              className={`hidden md:block transition-colors hover:text-accent-500 ${
-                isScrolled ? 'text-gray-800' : 'text-white'
-              }`}
-            >
-              <User size={20} />
-            </Link>
+            {auth.isAuthenticated ? (
+              <div className="hidden md:flex items-center space-x-4">
+                {auth.user?.role === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    className={`transition-colors hover:text-accent-500 ${
+                      isScrolled ? 'text-gray-800' : 'text-white'
+                    }`}
+                  >
+                    Admin
+                  </Link>
+                )}
+                <Link 
+                  to="/profile" 
+                  className={`transition-colors hover:text-accent-500 ${
+                    isScrolled ? 'text-gray-800' : 'text-white'
+                  }`}
+                >
+                  <User size={20} />
+                </Link>
+                <button 
+                  onClick={logout}
+                  className={`transition-colors hover:text-accent-500 ${
+                    isScrolled ? 'text-gray-800' : 'text-white'
+                  }`}
+                >
+                  <LogOut size={20} />
+                </button>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center space-x-4">
+                <button 
+                  onClick={() => setShowLoginModal(true)}
+                  className={`transition-colors hover:text-accent-500 ${
+                    isScrolled ? 'text-gray-800' : 'text-white'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={() => setShowRegisterModal(true)}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    isScrolled 
+                      ? 'bg-primary-600 text-white hover:bg-primary-700' 
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
             <Link 
               to="/wishlist" 
               className={`hidden md:block transition-colors hover:text-accent-500 ${
@@ -223,17 +282,41 @@ const Header: React.FC = () => {
                 Contact
               </Link>
               <Link 
-                to="/account" 
+                to="/profile" 
                 className="block text-gray-800 hover:text-primary-600 font-medium"
               >
-                My Account
+                {auth.isAuthenticated ? 'My Profile' : 'Sign In'}
               </Link>
+              {!auth.isAuthenticated && (
+                <button 
+                  onClick={() => setShowRegisterModal(true)}
+                  className="block text-gray-800 hover:text-primary-600 font-medium w-full text-left"
+                >
+                  Sign Up
+                </button>
+              )}
+              {auth.isAuthenticated && auth.user?.role === 'admin' && (
+                <Link 
+                  to="/admin" 
+                  className="block text-gray-800 hover:text-primary-600 font-medium"
+                >
+                  Admin Dashboard
+                </Link>
+              )}
               <Link 
                 to="/wishlist" 
                 className="block text-gray-800 hover:text-primary-600 font-medium"
               >
                 Wishlist
               </Link>
+              {auth.isAuthenticated && (
+                <button 
+                  onClick={logout}
+                  className="block text-gray-800 hover:text-primary-600 font-medium w-full text-left"
+                >
+                  Sign Out
+                </button>
+              )}
             </nav>
           </div>
         </div>
@@ -241,6 +324,18 @@ const Header: React.FC = () => {
       
       {/* Cart Sidebar */}
       <CartSidebar />
+      
+      {/* Auth Modals */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToRegister={handleSwitchToRegister}
+      />
+      <RegisterModal 
+        isOpen={showRegisterModal} 
+        onClose={() => setShowRegisterModal(false)}
+        onSwitchToLogin={handleSwitchToLogin}
+      />
     </header>
   );
 };
