@@ -70,6 +70,40 @@ const Header: React.FC = () => {
     setShowLoginModal(true);
   };
 
+  // Email/Password Login Handler
+  const handleEmailLogin = async (email: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) throw new Error('Login failed');
+      const data = await res.json();
+      setAuth({ isAuthenticated: true, user: data.user, token: data.token });
+      setShowLoginModal(false);
+    } catch (err) {
+      alert('Login failed. Please check your credentials.');
+    }
+  };
+
+  // Email/Password Register Handler
+  const handleEmailRegister = async (name: string, email: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!res.ok) throw new Error('Registration failed');
+      const data = await res.json();
+      setAuth({ isAuthenticated: true, user: data.user, token: data.token });
+      setShowRegisterModal(false);
+    } catch (err) {
+      alert('Registration failed. Please try again.');
+    }
+  };
+
   // Google Auth Handlers
   const handleGoogleAuth = async (credentialResponse: any, mode: 'login' | 'register') => {
     try {
@@ -396,6 +430,7 @@ const Header: React.FC = () => {
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}
         onSwitchToRegister={handleSwitchToRegister}
+        onLogin={handleEmailLogin}
         GoogleLoginComponent={
           <GoogleLogin
             onSuccess={cred => handleGoogleAuth(cred, 'login')}
@@ -408,6 +443,7 @@ const Header: React.FC = () => {
         isOpen={showRegisterModal} 
         onClose={() => setShowRegisterModal(false)}
         onSwitchToLogin={handleSwitchToLogin}
+        onRegister={handleEmailRegister}
         GoogleLoginComponent={
           <GoogleLogin
             onSuccess={cred => handleGoogleAuth(cred, 'register')}

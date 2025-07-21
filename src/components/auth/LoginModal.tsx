@@ -2,16 +2,23 @@ import React, { useState } from 'react';
 import { X, Eye, EyeOff, User, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../common/Button';
-import { GoogleLogin } from '@react-oauth/google';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToRegister: () => void;
+  onLogin: (email: string, password: string) => Promise<void>;
+  GoogleLoginComponent?: React.ReactNode;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegister }) => {
-  const { login, auth } = useAuth();
+const LoginModal: React.FC<LoginModalProps> = ({
+  isOpen,
+  onClose,
+  onSwitchToRegister,
+  onLogin,
+  GoogleLoginComponent,
+}) => {
+  const { auth } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,13 +31,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
     setError('');
 
     try {
-      await login(formData.email, formData.password);
+      await onLogin(formData.email, formData.password);
       onClose();
       setFormData({ email: '', password: '' });
       // Show success message
       alert('Login successful!');
     } catch (error: any) {
-      setError(error.message || 'Login failed');
+      setError('Invalid credentials. Please try again.');
     }
   };
 
@@ -41,140 +48,86 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
     });
   };
 
-  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
-    try {
-      // Send credentialResponse.credential (JWT) to your backend
-      const res = await fetch('/api/auth/google-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-      if (!res.ok) throw new Error('Google login failed');
-      // Handle login success (e.g., update context, close modal)
-      onClose();
-      // Show success message
-      alert('Google login successful!');
-    } catch (err) {
-      // Handle error (show message)
-      setError('Google login failed. Please try again.');
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/50 transition-opacity"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="relative w-full max-w-md bg-white rounded-lg shadow-xl">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Sign In</h2>
-            <button 
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X size={24} />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-lg relative">
+        <button className="absolute top-2 right-2" onClick={onClose}>
+          <X size={24} />
+        </button>
+        <h2 className="text-xl font-semibold mb-4">Sign In</h2>
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Enter your email"
+                required
+              />
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            </div>
           </div>
-          
-          {/* Content */}
-          <div className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-error-50 border border-error-200 text-error-800 px-4 py-3 rounded">
-                  {error}
-                </div>
-              )}
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="Enter your email"
-                    required
-                  />
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                </div>
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-              
-              <Button
-                type="submit"
-                variant="primary"
-                fullWidth
-                disabled={auth.isLoading}
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Enter your password"
+                required
+              />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {auth.isLoading ? 'Signing In...' : 'Sign In'}
-              </Button>
-            </form>
-            
-            <div className="mt-6">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="flex-1 h-px bg-gray-300" />
-                <span className="text-gray-500 text-sm">OR</span>
-                <div className="flex-1 h-px bg-gray-300" />
-              </div>
-              
-              <div className="mt-4">
-                <GoogleLogin
-                  onSuccess={handleGoogleLoginSuccess}
-                  onError={() => setError('Google login failed. Please try again.')}
-                />
-              </div>
-            </div>
-            
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <button
-                  onClick={onSwitchToRegister}
-                  className="text-primary-600 hover:text-primary-700 font-medium"
-                >
-                  Sign up
-                </button>
-              </p>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
+
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            disabled={auth.isLoading}
+          >
+            {auth.isLoading ? 'Signing In...' : 'Sign In'}
+          </Button>
+        </form>
+
+        {GoogleLoginComponent && (
+          <div className="my-4">
+            {GoogleLoginComponent}
+          </div>
+        )}
+
+        <div className="text-sm mt-2">
+          Don't have an account?{' '}
+          <button
+            onClick={onSwitchToRegister}
+            className="text-primary-600 underline"
+          >
+            Sign Up
+          </button>
         </div>
       </div>
     </div>
