@@ -1,0 +1,8 @@
+# robots.txt for CrochetCraft E-Commerce
+User-agent: *
+Allow: /
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Disallow admin and API endpoints from indexing
+Disallow: /admin
+Disallow: /api

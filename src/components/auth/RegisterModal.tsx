@@ -7,7 +7,7 @@ interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin: () => void;
-  onRegister: (name: string, email: string, password: string) => Promise<void>;
+  onRegister: (name: string, email: string, password: string, phone?: string) => Promise<void>;
   GoogleLoginComponent?: React.ReactNode;
 }
 
@@ -45,13 +45,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     }
 
     try {
-      await onRegister(formData.name, formData.email, formData.password);
-      onClose();
+      await onRegister(formData.name, formData.email, formData.password, formData.phone);
       setFormData({ name: '', email: '', password: '', confirmPassword: '', phone: '' });
+      onClose();
       // Show success message
       alert('Account created successfully!');
     } catch (error: any) {
-      setError('Registration failed. Please try again.');
+      setError(error?.message || 'Registration failed. Please try again.');
     }
   };
 

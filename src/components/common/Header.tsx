@@ -88,19 +88,22 @@ const Header: React.FC = () => {
   };
 
   // Email/Password Register Handler
-  const handleEmailRegister = async (name: string, email: string, password: string) => {
+  const handleEmailRegister = async (name: string, email: string, password: string, phone: string) => {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, phone }),
       });
-      if (!res.ok) throw new Error('Registration failed');
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Registration failed');
+      }
       const data = await res.json();
       setAuth({ isAuthenticated: true, user: data.user, token: data.token });
       setShowRegisterModal(false);
-    } catch (err) {
-      alert('Registration failed. Please try again.');
+    } catch (err: any) {
+      alert(err.message || 'Registration failed. Please try again.');
     }
   };
 

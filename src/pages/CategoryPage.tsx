@@ -41,6 +41,7 @@ const CategoryPage: React.FC = () => {
       <Helmet>
         <title>{category.name} | CrochetCraft</title>
         <meta name="description" content={category.description} />
+        <link rel="canonical" href={`https://yourdomain.com/category/${slug}`} />
       </Helmet>
       
       <div className="pt-24 pb-16">
