@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Eye, EyeOff, User, Mail, Lock, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../common/Button';
+import { GoogleLogin } from '@react-oauth/google';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -52,6 +53,21 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleGoogleRegisterSuccess = async (credentialResponse: any) => {
+    try {
+      // Send credentialResponse.credential (JWT) to your backend
+      const res = await fetch('/api/auth/google-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+      if (!res.ok) throw new Error('Google registration failed');
+      // Handle registration success (e.g., update context, close modal)
+    } catch (err) {
+      // Handle error (show message)
+    }
   };
 
   if (!isOpen) return null;
@@ -204,6 +220,20 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                 {auth.isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
+            
+            <div className="mt-4">
+              <div className="flex items-center justify-center my-4">
+                <div className="flex-1 border-t border-gray-300" />
+                <span className="px-4 text-sm text-gray-500">OR</span>
+                <div className="flex-1 border-t border-gray-300" />
+              </div>
+              
+              <GoogleLogin
+                onSuccess={handleGoogleRegisterSuccess}
+                onError={() => {/* handle error */}}
+                containerProps={{ className: "w-full" }}
+              />
+            </div>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">

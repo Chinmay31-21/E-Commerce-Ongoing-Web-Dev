@@ -1,44 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Heart, Search, Menu, X, User, LogOut } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ShoppingBag, Heart, Search, Menu, X, User, LogOut, ChevronDown } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import CartSidebar from '../cart/CartSidebar';
 import LoginModal from '../auth/LoginModal';
 import RegisterModal from '../auth/RegisterModal';
 import { categories } from '../../data/categories';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { cart, toggleCart } = useCart();
-  const { auth, logout } = useAuth();
+  const { auth, logout, setAuth } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+
   // Handle scroll event to change header style
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  
+
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
-  
+
+  // Close account menu on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setShowAccountMenu(false);
+      }
+    }
+    if (showAccountMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showAccountMenu]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -51,7 +69,56 @@ const Header: React.FC = () => {
     setShowRegisterModal(false);
     setShowLoginModal(true);
   };
-  
+
+  // Google Auth Handlers
+  const handleGoogleAuth = async (credentialResponse: any, mode: 'login' | 'register') => {
+    try {
+      const res = await fetch(`/api/auth/google-${mode}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+      if (!res.ok) throw new Error('Google authentication failed');
+      const data = await res.json();
+      setAuth({ isAuthenticated: true, user: data.user, token: data.token });
+      setShowLoginModal(false);
+      setShowRegisterModal(false);
+    } catch (err) {
+      alert('Google authentication failed. Please try again.');
+    }
+  };
+
+  // Account menu for authenticated users
+  const AccountMenu = () => (
+    <div className="relative" ref={accountMenuRef}>
+      <button
+        className={`flex items-center space-x-2 transition-colors hover:text-accent-500 ${isScrolled ? 'text-gray-800' : 'text-white'}`}
+        onClick={() => setShowAccountMenu((v) => !v)}
+      >
+        <User size={20} />
+        <span className="hidden md:inline">{auth.user?.name?.split(' ')[0] || 'Account'}</span>
+        <ChevronDown size={16} />
+      </button>
+      {showAccountMenu && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 py-2">
+          <div className="px-4 py-2 text-gray-700 font-semibold border-b">Hello, {auth.user?.name}</div>
+          <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</Link>
+          <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Orders</Link>
+          <Link to="/wishlist" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Wishlist</Link>
+          {auth.user?.role === 'admin' && (
+            <Link to="/admin" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Admin Dashboard</Link>
+          )}
+          <button
+            onClick={() => { logout(); setShowAccountMenu(false); }}
+            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            <span className="flex items-center"><LogOut size={16} className="mr-2" />Sign Out</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -145,37 +212,14 @@ const Header: React.FC = () => {
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
             {auth.isAuthenticated ? (
-              <div className="hidden md:flex items-center space-x-4">
-                <span className={`text-sm ${isScrolled ? 'text-gray-800' : 'text-white'}`}>
+              <>
+                <span className={`hidden md:block text-sm ${isScrolled ? 'text-gray-800' : 'text-white'}`}>
                   Welcome, {auth.user?.name}
                 </span>
-                {auth.user?.role === 'admin' && (
-                  <Link 
-                    to="/admin" 
-                    className={`transition-colors hover:text-accent-500 ${
-                      isScrolled ? 'text-gray-800' : 'text-white'
-                    }`}
-                  >
-                    Admin
-                  </Link>
-                )}
-                <Link 
-                  to="/profile" 
-                  className={`transition-colors hover:text-accent-500 ${
-                    isScrolled ? 'text-gray-800' : 'text-white'
-                  }`}
-                >
-                  <User size={20} />
-                </Link>
-                <button 
-                  onClick={logout}
-                  className={`transition-colors hover:text-accent-500 ${
-                    isScrolled ? 'text-gray-800' : 'text-white'
-                  }`}
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
+                <div className="hidden md:block">
+                  <AccountMenu />
+                </div>
+              </>
             ) : (
               <div className="hidden md:flex items-center space-x-4">
                 <button 
@@ -285,23 +329,37 @@ const Header: React.FC = () => {
                 Contact
               </Link>
               {auth.isAuthenticated && (
-                <div className="text-gray-600 text-sm mb-1">
-                  Welcome, {auth.user?.name}
-                </div>
+                <>
+                  <div className="text-gray-600 text-sm mb-1">
+                    Welcome, {auth.user?.name}
+                  </div>
+                  <div>
+                    <AccountMenu />
+                  </div>
+                </>
               )}
-              <Link 
-                to="/profile" 
-                className="block text-gray-800 hover:text-primary-600 font-medium"
-              >
-                {auth.isAuthenticated ? 'My Profile' : 'Sign In'}
-              </Link>
               {!auth.isAuthenticated && (
-                <button 
-                  onClick={() => setShowRegisterModal(true)}
-                  className="block text-gray-800 hover:text-primary-600 font-medium w-full text-left"
-                >
-                  Sign Up
-                </button>
+                <>
+                  <button 
+                    onClick={() => setShowLoginModal(true)}
+                    className="block text-gray-800 hover:text-primary-600 font-medium w-full text-left"
+                  >
+                    Sign In
+                  </button>
+                  <button 
+                    onClick={() => setShowRegisterModal(true)}
+                    className="block text-gray-800 hover:text-primary-600 font-medium w-full text-left"
+                  >
+                    Sign Up
+                  </button>
+                  <div className="my-2">
+                    <GoogleLogin
+                      onSuccess={cred => handleGoogleAuth(cred, 'login')}
+                      onError={() => alert('Google login failed')}
+                      width="100%"
+                    />
+                  </div>
+                </>
               )}
               {auth.isAuthenticated && auth.user?.role === 'admin' && (
                 <Link 
@@ -338,11 +396,25 @@ const Header: React.FC = () => {
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}
         onSwitchToRegister={handleSwitchToRegister}
+        GoogleLoginComponent={
+          <GoogleLogin
+            onSuccess={cred => handleGoogleAuth(cred, 'login')}
+            onError={() => alert('Google login failed')}
+            width="100%"
+          />
+        }
       />
       <RegisterModal 
         isOpen={showRegisterModal} 
         onClose={() => setShowRegisterModal(false)}
         onSwitchToLogin={handleSwitchToLogin}
+        GoogleLoginComponent={
+          <GoogleLogin
+            onSuccess={cred => handleGoogleAuth(cred, 'register')}
+            onError={() => alert('Google registration failed')}
+            width="100%"
+          />
+        }
       />
     </header>
   );
