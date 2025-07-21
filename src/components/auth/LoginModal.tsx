@@ -26,6 +26,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
       await login(formData.email, formData.password);
       onClose();
       setFormData({ email: '', password: '' });
+      // Show success message
+      alert('Login successful!');
     } catch (error: any) {
       setError(error.message || 'Login failed');
     }

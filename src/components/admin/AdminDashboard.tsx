@@ -52,7 +52,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/admin/dashboard', {
+      const response = await fetch('http://localhost:5000/api/admin/dashboard', {
         headers: {
           'Authorization': `Bearer ${auth.token}`,
         },
@@ -68,7 +68,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/admin/products', {
+      const response = await fetch('http://localhost:5000/api/admin/products', {
         headers: {
           'Authorization': `Bearer ${auth.token}`,
         },
@@ -82,7 +82,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('/api/admin/orders', {
+      const response = await fetch('http://localhost:5000/api/admin/orders', {
         headers: {
           'Authorization': `Bearer ${auth.token}`,
         },
@@ -96,7 +96,7 @@ const AdminDashboard: React.FC = () => {
 
   const updateOrderStatus = async (orderId: string, status: string, paymentStatus: string) => {
     try {
-      const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+      const response = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

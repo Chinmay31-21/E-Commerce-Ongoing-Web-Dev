@@ -146,6 +146,9 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
             {auth.isAuthenticated ? (
               <div className="hidden md:flex items-center space-x-4">
+                <span className={`text-sm ${isScrolled ? 'text-gray-800' : 'text-white'}`}>
+                  Welcome, {auth.user?.name}
+                </span>
                 {auth.user?.role === 'admin' && (
                   <Link 
                     to="/admin" 
@@ -284,6 +287,9 @@ const Header: React.FC = () => {
               <Link 
                 to="/profile" 
                 className="block text-gray-800 hover:text-primary-600 font-medium"
+                  <div className="text-gray-600 text-sm">
+                    Welcome, {auth.user?.name}
+                  </div>
               >
                 {auth.isAuthenticated ? 'My Profile' : 'Sign In'}
               </Link>

@@ -17,6 +17,7 @@ import WishlistPage from './pages/WishlistPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminLoginPage from './pages/AdminLoginPage';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
                   <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin-login" element={<AdminLoginPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </main>

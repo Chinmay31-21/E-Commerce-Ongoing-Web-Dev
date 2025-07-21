@@ -29,6 +29,29 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Create default admin user
+const createDefaultAdmin = async () => {
+  try {
+    const User = require('./models/User');
+    const adminExists = await User.findOne({ email: 'admin@crochetcraft.com' });
+    
+    if (!adminExists) {
+      const admin = new User({
+        name: 'Admin User',
+        email: 'admin@crochetcraft.com',
+        password: 'admin123',
+        role: 'admin'
+      });
+      
+      await admin.save();
+      console.log('Default admin created:');
+      console.log('Email: admin@crochetcraft.com');
+      console.log('Password: admin123');
+    }
+  } catch (error) {
+    console.error('Error creating default admin:', error);
+  }
+};
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/crochetcraft', {
   useNewUrlParser: true,
@@ -36,6 +59,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/crochetcr
 })
 .then(() => {
   console.log('Connected to MongoDB');
+  createDefaultAdmin();
 })
 .catch((error) => {
   console.error('MongoDB connection error:', error);

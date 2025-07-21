@@ -40,6 +40,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
       await register(formData.name, formData.email, formData.password, formData.phone);
       onClose();
       setFormData({ name: '', email: '', password: '', confirmPassword: '', phone: '' });
+      // Show success message
+      alert('Account created successfully!');
     } catch (error: any) {
       setError(error.message || 'Registration failed');
     }
