@@ -19,32 +19,15 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  phone: {
-    type: String,
-    trim: true
-  },
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: { type: String, default: 'United States' }
-  },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
   },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  wishlist: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  }]
-}, {
-  timestamps: true
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 // Hash password before saving

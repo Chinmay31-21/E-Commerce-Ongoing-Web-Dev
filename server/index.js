@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const adminRoutes = require('./routes/admin');
+const { protect, adminOnly } = require('./middleware/auth');
 
 const app = express();
 
@@ -28,6 +29,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Example protected route
+app.get('/api/profile', protect, (req, res) => {
+  res.json({ message: 'Profile data', user: req.user });
+});
+
+// Example admin route
+app.get('/api/admin', protect, adminOnly, (req, res) => {
+  res.json({ message: 'Admin data' });
+});
 
 // Create default admin user
 const createDefaultAdmin = async () => {
@@ -60,6 +71,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/crochetcr
 .then(() => {
   console.log('Connected to MongoDB');
   createDefaultAdmin();
+  app.listen(5000, () => console.log('Server running on port 5000'));
 })
 .catch((error) => {
   console.error('MongoDB connection error:', error);
@@ -69,9 +81,4 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/crochetcr
 app.use((error, req, res, next) => {
   console.error(error);
   res.status(500).json({ message: 'Something went wrong!' });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });

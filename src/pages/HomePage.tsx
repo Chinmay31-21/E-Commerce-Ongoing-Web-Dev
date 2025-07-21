@@ -11,8 +11,10 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>CrochetCraft | Exclusive Handmade Crochet Designs</title>
-        <meta name="description" content="Discover exclusive handmade crochet designs, patterns, and finished products. Build your crochet brand with our premium collection of unique designs and supplies." />
+        <title>CrochetCraft - Home</title>
+        <meta name="description" content="Shop the best handmade crochet products online." />
+        <meta name="keywords" content="crochet, handmade, crafts, shop, ecommerce" />
+        <link rel="canonical" href="https://yourdomain.com/" />
       </Helmet>
       
       <Hero />
