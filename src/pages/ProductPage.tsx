@@ -21,7 +21,7 @@ const ProductPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{product.name} | Elegance</title>
+        <title>{product.name} | CrochetCraft</title>
         <meta name="description" content={product.description.substring(0, 160)} />
       </Helmet>
       

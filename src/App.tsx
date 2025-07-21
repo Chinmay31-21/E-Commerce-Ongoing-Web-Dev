@@ -20,8 +20,8 @@ function App() {
   return (
     <Router>
       <Helmet>
-        <title>Elegance | Premium Lifestyle Products</title>
-        <meta name="description" content="Discover our curated collection of premium products designed to enhance your everyday life with style and sophistication." />
+        <title>CrochetCraft | Exclusive Handmade Crochet Designs</title>
+        <meta name="description" content="Discover exclusive handmade crochet designs, patterns, and finished products. Build your crochet brand with our premium collection of unique designs and supplies." />
       </Helmet>
       
       <CartProvider>

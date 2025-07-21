@@ -38,7 +38,7 @@ const ProfilePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>My Profile | Elegance</title>
+        <title>My Profile | CrochetCraft</title>
         <meta name="description" content="Manage your account settings and view your orders." />
       </Helmet>
 

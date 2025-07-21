@@ -29,7 +29,7 @@ const WishlistPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Wishlist | Elegance</title>
+        <title>Wishlist | CrochetCraft</title>
         <meta name="description" content="View and manage your saved items." />
       </Helmet>
       

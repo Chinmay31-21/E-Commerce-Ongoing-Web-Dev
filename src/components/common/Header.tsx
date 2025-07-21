@@ -49,7 +49,7 @@ const Header: React.FC = () => {
             to="/" 
             className="font-serif text-2xl font-semibold tracking-wide transition-colors"
           >
-            <span className={isScrolled ? 'text-primary-900' : 'text-white'}>Elegance</span>
+            <span className={`font-script text-3xl ${isScrolled ? 'text-primary-900' : 'text-white'}`}>CrochetCraft</span>
           </Link>
           
           {/* Desktop Navigation */}

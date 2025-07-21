@@ -10,7 +10,7 @@ const CategoryShowcase: React.FC = () => {
     <section className="py-16">
       <div className="container mx-auto px-4">
         <h2 className="font-serif text-3xl font-medium text-gray-900 text-center mb-12">
-          Browse By Category
+          Explore Our Collections
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -45,10 +45,10 @@ const CategoryShowcase: React.FC = () => {
         
         <div className="mt-12 text-center">
           <Link 
-            to="/categories"
+            to="/category/crochet-patterns"
             className="inline-block px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
           >
-            View All Categories
+            View All Collections
           </Link>
         </div>
       </div>

@@ -39,7 +39,7 @@ const CategoryPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{category.name} | Elegance</title>
+        <title>{category.name} | CrochetCraft</title>
         <meta name="description" content={category.description} />
       </Helmet>
       

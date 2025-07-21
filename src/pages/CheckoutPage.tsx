@@ -171,8 +171,8 @@ const CheckoutPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Checkout | Elegance</title>
-        <meta name="description" content="Complete your purchase securely at Elegance." />
+        <title>Checkout | CrochetCraft</title>
+        <meta name="description" content="Complete your purchase securely at CrochetCraft." />
       </Helmet>
       
       <div className="pt-32 pb-16 bg-gray-50">

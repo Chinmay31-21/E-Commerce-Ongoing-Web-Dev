@@ -12,10 +12,10 @@ const FeaturedProducts: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h2 className="font-serif text-3xl font-medium text-gray-900">
-            Featured Products
+            Featured Designs
           </h2>
           <Link 
-            to="/category/featured" 
+            to="/category/crochet-patterns" 
             className="flex items-center text-primary-600 hover:text-primary-700 font-medium"
           >
             View All <ArrowRight size={18} className="ml-1" />

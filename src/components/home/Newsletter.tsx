@@ -25,10 +25,10 @@ const Newsletter: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-serif text-3xl font-medium text-white mb-4">
-            Stay Updated
+            Join Our Crafting Community
           </h2>
           <p className="text-primary-200 mb-8">
-            Subscribe to our newsletter to receive updates on new products, special offers, and exclusive content.
+            Subscribe to receive new patterns, crafting tips, exclusive designs, and special offers for our crochet community.
           </p>
           
           {isSubmitted ? (

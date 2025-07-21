@@ -10,11 +10,11 @@ const Footer: React.FC = () => {
           {/* Brand Column */}
           <div>
             <Link to="/" className="font-serif text-2xl font-semibold tracking-wide">
-              Elegance
+              <span className="font-script text-3xl">CrochetCraft</span>
             </Link>
             <p className="mt-4 text-gray-400 text-sm">
-              Your destination for premium lifestyle products, offering a curated selection of elegant 
-              items for the discerning customer.
+              Your destination for exclusive handmade crochet designs, patterns, and supplies. 
+              Build your crochet brand with our premium collection of unique designs.
             </p>
             <div className="mt-6 flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -34,28 +34,28 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-medium mb-4">Shop</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/category/electronics" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Electronics
+                <Link to="/category/crochet-patterns" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Crochet Patterns
                 </Link>
               </li>
               <li>
-                <Link to="/category/home-decor" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Home Decor
+                <Link to="/category/finished-products" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Finished Products
                 </Link>
               </li>
               <li>
-                <Link to="/category/kitchen" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Kitchen
+                <Link to="/category/yarn-supplies" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Yarn & Supplies
                 </Link>
               </li>
               <li>
-                <Link to="/category/accessories" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Accessories
+                <Link to="/category/baby-items" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Baby Items
                 </Link>
               </li>
               <li>
-                <Link to="/category/food-beverages" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Food & Beverages
+                <Link to="/category/seasonal-items" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Seasonal Items
                 </Link>
               </li>
             </ul>
@@ -100,7 +100,7 @@ const Footer: React.FC = () => {
               <li className="flex items-start">
                 <MapPin size={18} className="text-gray-400 mr-2 mt-0.5" />
                 <span className="text-gray-400 text-sm">
-                  123 Elegant Street<br />
+                  123 Craft Lane<br />
                   New York, NY 10001<br />
                   United States
                 </span>
@@ -111,7 +111,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center">
                 <Mail size={18} className="text-gray-400 mr-2" />
-                <span className="text-gray-400 text-sm">info@elegance.com</span>
+                <span className="text-gray-400 text-sm">info@crochetcraft.com</span>
               </li>
             </ul>
           </div>
@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row md:justify-between">
             <p className="text-gray-500 text-sm">
-              &copy; {new Date().getFullYear()} Elegance. All rights reserved.
+              &copy; {new Date().getFullYear()} CrochetCraft. All rights reserved.
             </p>
             <div className="mt-4 md:mt-0 flex flex-wrap gap-4">
               <Link to="/terms" className="text-gray-500 hover:text-gray-400 text-sm">

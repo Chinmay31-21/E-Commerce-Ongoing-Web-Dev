@@ -16,7 +16,7 @@ const OrderConfirmationPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Order Confirmation | Elegance</title>
+        <title>Order Confirmation | CrochetCraft</title>
         <meta name="description" content="Your order has been confirmed and is being processed." />
       </Helmet>
       
